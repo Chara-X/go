@@ -1,0 +1,33 @@
+package template
+
+import (
+	"reflect"
+	"text/template"
+)
+
+var _ = template.IsTrue
+
+// [template.IsTrue]
+func IsTrue(val any) (truth, ok bool) { return isTrue(reflect.ValueOf(val)), true }
+func isTrue(val reflect.Value) bool {
+	switch val.Kind() {
+	case reflect.Array, reflect.Map, reflect.Slice, reflect.String:
+		return val.Len() > 0
+	case reflect.Bool:
+		return val.Bool()
+	case reflect.Complex64, reflect.Complex128:
+		return val.Complex() != 0
+	case reflect.Chan, reflect.Func, reflect.Pointer, reflect.UnsafePointer, reflect.Interface:
+		return !val.IsNil()
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return val.Int() != 0
+	case reflect.Float32, reflect.Float64:
+		return val.Float() != 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return val.Uint() != 0
+	case reflect.Struct:
+		return true
+	default:
+		panic(val.Kind())
+	}
+}
